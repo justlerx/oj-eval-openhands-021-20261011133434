@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <set>
 
 using namespace std;
 
@@ -30,27 +29,25 @@ int main() {
     
     int count = 0;
     
-    // For each pair of points as potential bottom-left and top-right corners
+    // For each point as potential bottom-left corner
     for (int i = 0; i < n; i++) {
+        // Minimum y-coordinate of points seen so far that are above points[i]
+        // Initialize to a value larger than any possible y-coordinate
+        int min_y = 1000000001;
+        
+        // Process points to the right of points[i] in order of increasing x
         for (int j = i + 1; j < n; j++) {
-            // Check if points[i] can be bottom-left and points[j] can be top-right
-            if (points[i].x < points[j].x && points[i].y < points[j].y) {
-                // Check if the rectangle is empty (no other points inside or on boundary)
-                bool empty = true;
-                for (int k = 0; k < n; k++) {
-                    if (k == i || k == j) continue;
-                    
-                    // Check if point k is inside or on the boundary of the rectangle
-                    if (points[k].x >= points[i].x && points[k].x <= points[j].x && 
-                        points[k].y >= points[i].y && points[k].y <= points[j].y) {
-                        empty = false;
-                        break;
-                    }
-                }
-                
-                if (empty) {
-                    count++;
-                }
+            // If this point is above points[i] and below or equal to the current minimum y
+            if (points[j].y > points[i].y && points[j].y <= min_y) {
+                count++;
+                // Update the minimum y-coordinate
+                min_y = points[j].y;
+            }
+            // If this point is above points[i] but above the current minimum y,
+            // it cannot be a top-right corner for an empty rectangle, but we still
+            // need to update the minimum y if it's smaller
+            else if (points[j].y > points[i].y) {
+                min_y = min(min_y, points[j].y);
             }
         }
     }
